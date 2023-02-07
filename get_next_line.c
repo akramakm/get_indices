@@ -3,60 +3,96 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mac <mac@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: ael-akma <ael-akma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/05 19:04:02 by mac               #+#    #+#             */
-/*   Updated: 2023/02/07 19:24:21 by mac              ###   ########.fr       */
+/*   Created: 2023/02/07 19:35:43 by ael-akma          #+#    #+#             */
+/*   Updated: 2023/02/08 00:17:11 by ael-akma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include<stdio.h>
-#include<unistd.h>
-#include<fcntl.h>
 #include<stdlib.h>
+#include<fcntl.h>
+#include<unistd.h>
 
-int ft_strlen(char *s)
+int	ft_strlen(char *s)
 {
-    int i = 0;
-    while(s[i])
-        i++;
-    return(i);
+	int	i;
+
+	i = 0;
+    if (!s)
+        return 0;
+	while (s[i])
+		i++;
+	return (i);
 }
 
-char *ft_strchr(char *s , int c)
+
+char	*ft_strchr(char *s, int c)
 {
-    int i = 0;
-    while(s[i])
-    {
-        if ( s[i] == c)
-            return((char *) (s + i));
-        i++;
-    }
-    return 0;
-}
-char *ft_strjoin(char *s1,char *s2)
-{
-    char *str;
-    if(s1 ==  NULL)
-        s1 = "";
-    str  = malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
-    if (!str)
+	int	i;
+
+	i = 0;
+    if (!s)
         return NULL;
-    int i = 0;
-    while(s1[i])
-    {
-        str[i] = s1[i];
-        i++;
-    }
-    int x = 0;
-    while(s2[x])
-    {
-        str[i] = s2[x];
-        i++;
-        x++;
-    }
-    str[i]  = '\0';
-    return(str);
+	while (i <= ft_strlen(s))
+	{
+		if (s[i] == (char) c)
+			return ((char *)(s) + i);
+		i++;
+	}
+	return (0);
+}
+
+char	*ft_strdup(char *s1)
+{
+	char	*str;
+	int		i;
+
+	i = 0;
+	str = malloc((ft_strlen(s1) + 1));
+	if (!str)
+		return (0);
+	while (s1[i])
+	{
+		str[i] = s1[i];
+		i++;
+	}
+	str[i] = '\0';
+	return (str);
+}
+
+char	*ft_strjoin(char *s1, char *s2)
+{
+	char	*str;
+	int		i;
+	int		j;
+
+	i = 0;
+	j = 0;
+    if (s1 == NULL && s2 == NULL)
+        return NULL;
+    if (s1 == NULL)
+        return s2;
+    if (s2 == NULL)
+        return s1;
+        
+	str = (char *)malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1));
+	if (!str)
+		return (0);
+	while (s1[i])
+	{
+		str[i] = s1[i];
+		i++;
+	}
+	while (s2[j])
+	{
+		str[i] = s2[j];
+		i++;
+		j++;
+	}
+	str[i] = '\0';
+	return (str);
 }
 
 char *read_line(int fd,char *text)
@@ -74,28 +110,27 @@ char *read_line(int fd,char *text)
             return NULL;
         buffer[k] = '\0';
         text = ft_strjoin(text,buffer);
-        // printf("%s\n",text);
     }
-    return(text);
+    return (text);
 }
 
 char *get_line_no_back_n(char *txt)
 {
     int i = 0;
-    while(txt[i] != '\0' && txt[i] != '\n')
+    while(txt[i] != '\n' && txt[i] != '\0')
         i++;
     if(txt[i] == '\n')
         i++;
     char *line;
     line = (char *)malloc(i + 1);
     int k = 0;
-    while(k <= i)
+    while(k < i)
     {
         line[k] = txt[k];
         k++;
     }
     line[k] = '\0';
-    return(line);
+	return(line);
 }
 
 char *get_save(char *txt)
@@ -124,7 +159,7 @@ char *get_next_line(int fd)
 {
     static char *text;
     char *line;
-    text = "";
+    line = malloc(BUFFER_SIZE + 1);
     text  = read_line(fd,text);
     line = get_line_no_back_n(text);
     text = get_save(text);
@@ -133,15 +168,13 @@ char *get_next_line(int fd)
 
 int main()
 {
-    int fd  = open("akram.txt" , O_CREAT | O_RDWR);
-    static char *line;
-    line  = get_next_line(fd);
-    printf("%s",line);
-    line  = get_next_line(fd);
-    printf("%s",line);
-    line  = get_next_line(fd);
-    printf("%s",line);
-    // line  = get_next_line(fd);
-    // printf("%s",line);
-    
+    int fd = open("akram.txt" ,O_CREAT | O_RDWR);
+    char *txt;
+    int i = 0;
+    while (i < 10)
+    {
+        txt = get_next_line(fd);
+        printf("%s", txt);
+        i++;
+    }
 }
